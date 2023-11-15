@@ -291,7 +291,7 @@
     \end{minted}
 \end{frame}
 
-\begin{frame}[fragile]{SMT proof}
+\begin{frame}[fragile]{Alethe SMT proof}
     \begin{minted}[allowlocal,autogobble, fontsize=\footnotesize, frame=single]{smt.py:CustomLexer}
         (assume a0 (p a))
         (assume a1 (= a b))
@@ -304,20 +304,20 @@
 \end{frame}
 
 
-\begin{frame}{Alethe rules example}
+\begin{frame}{Alethe format}
 \begin{definition}[Alethe step notation]
-A proof in the Alethe language is an indexed list of steps.
+A proof in the Alethe language is an indexed list of step following the format:
 \begin{equation*}
     j. \quad  \Delta \quad \vdash~ \varphi \quad (R; p_1 \dots p_n)[a_1, \dots, a_n]\quad
 \end{equation*}
 \begin{itemize}
     \item[] With $i \in \mathbb{I}$  where $\mathbb{I}$ is a countable infinite set of valid indices, 
     \item[] a formula $\varphi$,
-    \item[] a rule name $\mathcal{R}$ from set of possible rules,
-    \item[] a possible empty sets $\{ p_1 \dots p_n \} \subseteq \mathbb{I}$,
+    \item[] a rule name $\mathcal{R}$ from a set of possible rules,
+    \item[] a possible empty sets $\{ p_1 \dots p_n \} \subseteq \mathbb{I}$ of premises (previous steps),
     \item[] a possible empty list of arguments $[a_1 \dots a_n]$ where $a_i = (x_i, t_i)$\\
     with $x_i$ a variable and $t_i$ a term,
-    \item[] and a context of the step $\Delta$.
+    \item[] and a context $\Delta$.
 \end{itemize}
 \end{definition}
 \end{frame}
@@ -328,8 +328,8 @@ A proof in the Alethe language is an indexed list of steps.
         \item Special rules
         \begin{itemize}
             \item[*] \textsubscript{$\vdash~\varphi\quad\texttt{asssume}$}
-            \item[*] \textsubscript{$\vdash~\varphi\quad(\texttt{hole}; p_1 \dots p_n)[a_1\dots a_n]$}
-            \item[*] \textsubscript{$\varphi_1 \dots \varphi_n, \psi ~ i.~\vdash~ \neg \varphi_1 \dots \neg \varphi_n \psi$}
+            \item[*] \textsubscript{$\vdash~\varphi\quad(\texttt{hole};~p_1 \dots p_n)[a_1\dots a_n]$}
+            \item[*] \textsubscript{$\varphi_1 \dots \varphi_n,~\psi~\vdash~ \neg \varphi_1 \dots \neg \varphi_n \psi$}
                     \textsubscript{$\qquad\qquad (\texttt{subproof};~p_1 \dots p_n)$}
         \end{itemize}
         \item Resolution rules
@@ -350,7 +350,7 @@ A proof in the Alethe language is an indexed list of steps.
         \end{itemize}
         \item Quantifier handling
         \begin{itemize}
-            \item[*] \textsubscript{$j.  \Delta, x_i \mapsto y_i \vdash~ \varphi \approx \varphi'$}
+            \item[*] \textsubscript{$j.~\Delta,~x_i \mapsto y_i \vdash~ \varphi \approx \varphi'$}
                 \newline \textsubscript{$i. \vdash  \forall x_1 \dots x_n, \varphi \approx \forall y_1 \dots y_n, \varphi' ~\texttt{(bind)}$}
             \item[*] \textsubscript{$\texttt{forall\_inst}$}
         \end{itemize}
@@ -672,16 +672,16 @@ end;
 
 \begin{frame}{Contexts in Alethe}
 \begin{definition}[Proof context]
-    We denote $\Delta_c$ as the Alethe proof context.
-    It is use to reason about bound variable and previous \textbf{step}.\\\\
-    If $\quad j.\quad ~ x_1 \mapsto y_1, \dots , x_n \mapsto y_n \quad \vdash~ \varphi~y_1 \dots y_n \quad (R, p_1 \dots p_n)[x_1, \dots, x_n]\quad$ proved\\\\
-    Then $j(\varphi~y_1 \dots y_n;~R;~p_1 \dots p_n;~a_1 \dots a\_n) \in \Delta$\\
-    And $x_1 \mapsto y_1, \dots , x_n \mapsto y_n \in \Delta$
+We denote $\Delta_c$ as the Alethe proof context.
+It is use to reason about bound variable and store previous proved \textbf{step}.\\\\
+If $\quad j.\quad ~ x_1 \mapsto y_1, \dots , x_n \mapsto y_n \quad \vdash~ \varphi~y_1 \dots y_n \quad (R, p_1 \dots p_n)[x_1, \dots, x_n]\quad$ proved\\\\
+Then $j(\varphi~y_1 \dots y_n;~R;~p_1 \dots p_n;~a_1 \dots a\_n) \in \Delta$\\
+And $x_1 \mapsto y_1, \dots , x_n \mapsto y_n \in \Delta$
 \end{definition}
 \vfill
 \begin{definition}[Definition context]
-    We denote $\Delta_{def}$ as the Alethe definition context.
-    It is use to store user declarations $\texttt{declare-sort}~\text{and}~\texttt{declare-fun}$.\\
+We denote $\Delta_{def}$ as the Alethe definition context.
+It is use to store user declarations $\texttt{declare-sort}~\text{and}~\texttt{declare-fun}$.\\
 \end{definition}
 \begin{definition}[Alethe context] We set $\Delta = \Delta_c \cup \Delta_{def}$ \end{definition}
 \end{frame}
@@ -706,9 +706,9 @@ We denote $\Gamma_\mathcal{A}$ as the Lambdapi context with Alethe definitions.
 \end{frame}
 
 \begin{frame}[t,fragile]{Alethe encoding in Lambdapi}
-We encode Alethe rule $\mathcal{R}$ as a corresponding symbol.
+We encode Alethe rule $\mathcal{R}$ as corresponding \lstinline{symbol R}.
 \begin{block}{Clause}
-Alethe treats clause as a set. To solve canonical representation of clause, we define clause as list in a Church encoding style:\\
+Alethe treats clause as a set creating a canonical representation problem. We define clause as list in a Church encoding style to solve it:
 
 \begin{lstlisting}[mathescape=true]
 constant symbol Clause : TYPE;
@@ -726,26 +726,6 @@ symbol Clause_ind:  Π P: (Clause → Prop), Π l,
 \end{frame}
 
 
-\begin{frame}[t,fragile]{Alethe rule encoding example}
-The rule $not\_implies1$ in Alethe set of rules
-\begin{align*}
-& i. \quad \quad \vdash~ \neg (\varphi_1 \rightarrow \varphi_2) &(...)\\
-& j. \quad \quad \vdash~ \varphi_1  &(not\_implies1; i)
-\end{align*}
-
-is translated into:
-
-\begin{lstlisting}[mathescape=true]
-opaque symbol not_implies_1 [$\varphi_1~\varphi_2$] : π ($\neg^c$($\varphi_1 \implies^c \varphi_2$)) → $~\dot{\pi}$ ($\varphi_1 \veedot \Square$) ≔
-begin
-    assume $\varphi_1~\varphi_2~ H$;
-    apply $\lor^c_{i1}$;
-    apply $\land^c_{e1}$ (imply_to_and H);
-end;
-\end{lstlisting}
-\end{frame}
-
-
 \begin{frame}{Clause concatenation and canonical form}
 \begin{align*}
 &\text{With clause as disjunction}\\
@@ -756,7 +736,7 @@ end;
 \end{align*}
 \end{frame}
 
-\begin{frame}[t,fragile]{Clause representation in Lambdapi}
+\begin{frame}[t,fragile]{Proof of clause}
 Proof of clause $(\text{cl}~~\varphi_1, \dots ,\varphi_n)$ with ($\mathcal{R}; p_1 \dots p_n)[a_1 \dots a_n]$ in a step such as
 \begin{equation*}
     j. \quad  \Delta \quad \vdash~ (\text{cl}~~\varphi_1, \dots ,\varphi_n) \quad (R; p_1 \dots p_n)[a_1, \dots, a_n]\quad
@@ -770,6 +750,25 @@ sequential symbol $\mathcal{E}$: Clause →  Prop;
 rule $\mathcal{E}$ ($~\$$x $\veedot$ $~\$$y) ↪ $~~\$$x $\lor^c$ ($\mathcal{E}$ $~\$$y)
 with $\mathcal{E}~\Square$  ↪   $\bot$;
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Alethe rule encoding example}
+    The rule $not\_implies1$ in Alethe set of rules
+    \begin{align*}
+    & i. \quad \quad \vdash~ \neg (\varphi_1 \rightarrow \varphi_2) &(...)\\
+    & j. \quad \quad \vdash~ \varphi_1  &(not\_implies1; i)
+    \end{align*}
+    
+    is translated into:
+    
+    \begin{lstlisting}[mathescape=true]
+    opaque symbol not_implies_1 [$\varphi_1~\varphi_2$] : π ($\neg^c$($\varphi_1 \implies^c \varphi_2$)) → $~\dot{\pi}$ ($\varphi_1 \veedot \Square$) ≔
+    begin
+        assume $\varphi_1~\varphi_2~ H$;
+        apply $\lor^c_{i1}$;
+        apply $\land^c_{e1}$ (imply_to_and H);
+    end;
+    \end{lstlisting}
 \end{frame}
 
 \begin{frame}{Clause conversion lemma}
