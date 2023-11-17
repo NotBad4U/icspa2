@@ -941,7 +941,7 @@ Stephan Merz. TLA+ Case Study: A Resource Allocator.
 \begin{block}{Bug founds}
 \begin{itemize}
 \item 2 importants bugs in Carcara elaboration process found,
-\item 1 bug found in CVC5 with $\texttt{and\_not}$ rule,
+\item 1 bug found in CVC5 related to $\texttt{and\_not}$ rule usage,
 \item and a related bug found in the new TLAPS SMT encoding.
 \end{itemize}
 \end{block}
@@ -957,8 +957,8 @@ Stephan Merz. TLA+ Case Study: A Resource Allocator.
 }
 
 \begin{frame}{Issues for reconstructing simplification rules}
-    Transformation cases are implicit, and multiple transformations in a step could occur.
-    \begin{block}{Rules example}
+Transformation cases are implicit, and multiple transformations in a step could occur.
+\begin{block}{Example:}
 
 \begin{multicols}{2}
 {\tiny
